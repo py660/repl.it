@@ -4,7 +4,7 @@ from typing import Optional
 
 from .database import Database, DatabaseStarter
 
-db: Optional[DatabaseStarter]
+#db: Optional[DatabaseStarter]
 db_url = environ.get("REPLIT_DB_URL")
 if db_url:
     db = DatabaseStarter(db_url)

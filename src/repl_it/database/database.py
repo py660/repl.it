@@ -463,6 +463,7 @@ class Database(abc.MutableMapping):
             raise ValueError("backup_mode cannot be less than -1. Accepted values are: -1, 0, n (where n is a positive integer)")
         elif self.backup_mode >= 1:
             self.backup_thread = threading.Thread(target=self.backup)
+            self.backup_thread.start()
 
     def __getitem__(self, key: str) -> Any:
         """Get the value of an item from the database.
