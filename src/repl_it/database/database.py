@@ -20,7 +20,6 @@ import requests
 import threading
 
 import pdb
-pdb.set_trace()
 
 
 def to_primitive(o: Any) -> Any:
@@ -452,6 +451,7 @@ class Database(abc.MutableMapping):
     __slots__ = ("db_url", "sess")
 
     def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
+        pdb.set_trace()
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
