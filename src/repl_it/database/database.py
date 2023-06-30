@@ -19,7 +19,6 @@ import aiohttp
 import requests
 import threading
 
-import pdb
 
 
 def to_primitive(o: Any) -> Any:
@@ -75,7 +74,6 @@ class AsyncDatabase:
             backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify).
         """
-        print(self)
         self.backup_loc = backup
         self.backup_mode = backup_mode
         self.db_url = db_url
@@ -451,7 +449,6 @@ class Database(abc.MutableMapping):
     __slots__ = ("backup_loc", "backup_mode", "db_url", "sess")
 
     def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
-        pdb.set_trace()
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
@@ -459,7 +456,6 @@ class Database(abc.MutableMapping):
             backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify, n [positive integer] for recurring backup every n seconds).
         """
-        print(self)
         self.backup_loc = backup
         self.backup_mode = backup_mode
         self.db_url = db_url
