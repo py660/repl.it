@@ -69,8 +69,8 @@ class AsyncDatabase:
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
-            db_url.     (str): Database url to use.
-            backup.     (str): Location of DB backups.
+            db_url      (str): Database url to use.
+            backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify).
         """
         self.backup_loc = backup
@@ -451,8 +451,8 @@ class Database(abc.MutableMapping):
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
-            db_url.     (str): Database url to use.
-            backup.     (str): Location of DB backups.
+            db_url      (str): Database url to use.
+            backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify, n [positive integer] for recurring backup every n seconds).
         """
         self.backup_loc = backup
