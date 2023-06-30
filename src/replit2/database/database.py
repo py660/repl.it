@@ -245,10 +245,10 @@ class AsyncDatabase:
         Returns:
             None: None
         """
-        db = await self.to_dict()
+        ret = await self.to_dict()
   
         with open(self.backup_loc, 'w') as fout:
-            json.dump(db, fout)
+            json.dump(ret, fout)
 
     async def load_backup(self, location: str="") -> None:
         """Overwrites the current DB with the data stored in the specified file
@@ -651,13 +651,13 @@ class Database(abc.MutableMapping):
         Returns:
             None: None
         """
-        db = {}
+        ret = {}
         keys = self.keys()
         for i in keys:
-            db[i] = self.get_raw(i)
+            ret[i] = self.get_raw(i)
   
         with open(self.backup_loc, 'w') as fout:
-            json.dump(db, fout)
+            json.dump(ret, fout)
 
     def load_backup(self, location: str="") -> None:
         """Overwrites the current DB with the data stored in the specified file
