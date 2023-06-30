@@ -130,7 +130,7 @@ class AsyncDatabase:
             value (Any): The value to set it to. Must be JSON-serializable.
         """
         await self.set_raw(key, _dumps(value))
-        if self.backup_mode = 0:
+        if self.backup_mode == 0:
             await self.backup()
 
     async def set_raw(self, key: str, value: str) -> None:
@@ -175,7 +175,7 @@ class AsyncDatabase:
             if response.status == 404:
                 raise KeyError(key)
             response.raise_for_status()
-        if self.backup_mode = 0:
+        if self.backup_mode == 0:
             await self.backup()
 
     async def list(self, prefix: str) -> Tuple[str, ...]:
@@ -542,7 +542,7 @@ class Database(abc.MutableMapping):
             value (Any): The value to set.
         """
         self.set_raw(key, _dumps(value))
-        if self.backup_mode = 0:
+        if self.backup_mode == 0:
             self.backup()
 
     def set_raw(self, key: str, value: str) -> None:
@@ -582,7 +582,7 @@ class Database(abc.MutableMapping):
             KeyError: Key is not set
         """
         r = self.sess.delete(self.db_url + "/" + urllib.parse.quote(key))
-        if self.backup_mode = 0:
+        if self.backup_mode == 0:
             self.backup()
         if r.status_code == 404:
             raise KeyError(key)
