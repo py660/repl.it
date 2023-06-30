@@ -6,10 +6,10 @@
 Welcome to Replit-py's User Guide!
 ==================================
 
-\>\>\> ``import replit``
+\>\>\> ``import replit2``
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-This repository is the home for the ``replit`` Python package, which
+This repository is the home for the ``replit2`` Python package, which
 provides:
 
 -  A fully-featured `Replit DB <https://docs.repl.it/misc/database>`_ client and CLI.

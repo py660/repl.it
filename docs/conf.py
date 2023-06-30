@@ -22,9 +22,9 @@ import replit
 
 # -- Project information -----------------------------------------------------
 
-project = "replit-py"
+project = "repl_it"
 copyright = "2021"
-author = "<a href='https://repl.it/'>Replit</a>"
+author = "<a href='https://repl.it/'>Replit</a> and <a href='https://replit.com/@python660'>@python660 on replit</a>"
 
 # The full version, including alpha/beta/rc tags
 release = "3.2.2"

@@ -10,7 +10,8 @@ Repl.it DB is super simple to get up and running. Just use it like a regular pyt
 
 ::
 
-   from replit import db
+   from replit2 import db
+   db.start()
 
    db["key"] = 12
    print(db["key"]) # => 12

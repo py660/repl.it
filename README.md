@@ -1,8 +1,8 @@
-### `>>> import replit`
+### `>>> import replit2`
 
 ![compute](https://github.com/kennethreitz42/replit-py/blob/kr-cleanup/ext/readme.gif?raw=true)
 
-This repository is the home for the `replit` Python package, which provides:
+This repository is the home for the `replit2` Python package, which provides:
 
 - A fully-featured database client for [Replit DB](https://docs.repl.it/misc/database).
 - A Flask–based application framework for accelerating development on the platform.
