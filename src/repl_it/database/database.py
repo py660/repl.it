@@ -65,7 +65,7 @@ _dumps = dumps
 class AsyncDatabase:
     """Async interface for Repl.it Database."""
 
-    __slots__ = ("db_url", "sess")
+    __slots__ = ("backup_loc", "backup_mode", "db_url", "sess")
 
     def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
         """Initialize database. You shouldn't have to do this manually.
@@ -448,7 +448,7 @@ class Database(abc.MutableMapping):
     don't want this, use AsyncDatabase instead.
     """
 
-    __slots__ = ("db_url", "sess")
+    __slots__ = ("backup_loc", "backup_mode", "db_url", "sess")
 
     def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
         pdb.set_trace()
