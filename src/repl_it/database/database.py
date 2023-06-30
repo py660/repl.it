@@ -18,6 +18,7 @@ import urllib
 import aiohttp
 import requests
 import threading
+import time
 
 
 
@@ -463,7 +464,7 @@ class Database(abc.MutableMapping):
         if self.backup_mode < -1:
             raise ValueError("backup_mode cannot be less than -1. Accepted values are: -1, 0, n (where n is a positive integer)")
         elif self.backup_mode >= 1:
-            self.backup_thread = threading.Thread(target=self.backup)
+            self.backup_thread = threading.Thread(target=self.backupLoop, args=(self.backup_mode, ))
             self.backup_thread.start()
 
     def __getitem__(self, key: str) -> Any:
@@ -637,6 +638,11 @@ class Database(abc.MutableMapping):
     def dumps(self, val: Any) -> str:
         """JSON encodes a value that can be a special DB object."""
         return _dumps(val)
+    
+    def backupLoop(self, t) -> None:
+        while True:
+            self.backup()
+            time.sleep(t)
 
     def backup(self) -> None:
         """Backs up the DB to a customized file of choice
@@ -661,6 +667,7 @@ class Database(abc.MutableMapping):
         location = location if location else self.backup_loc
         with open(location, "r") as fin:
             back_db = json.load(fin)
+        print(back_db)
         for i in self.keys():
             self.__delitem__(i)
         self.set_bulk_raw(back_db)
