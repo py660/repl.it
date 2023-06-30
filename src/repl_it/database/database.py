@@ -666,7 +666,7 @@ class Database(abc.MutableMapping):
         with open(location, "r") as fin:
             back_db = json.load(fin)
         for i in self.keys():
-            self.delete(i)
+            self.__delitem__(i)
         self.set_bulk_raw(back_db)
 
 #    def __repr__(self) -> str:
