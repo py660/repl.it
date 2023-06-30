@@ -17,6 +17,7 @@ import urllib
 
 import aiohttp
 import requests
+import threading
 
 
 def to_primitive(o: Any) -> Any:
@@ -64,14 +65,22 @@ class AsyncDatabase:
 
     __slots__ = ("db_url", "sess")
 
-    def __init__(self, db_url: str) -> None:
+    def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
-            db_url (str): Database url to use.
+            db_url.     (str): Database url to use.
+            backup.     (str): Location of DB backups.
+            backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify).
         """
+        self.backup_loc = backup
+        self.backup_mode = backup_mode
         self.db_url = db_url
         self.sess = aiohttp.ClientSession()
+        if self.backup_mode < -1:
+            raise ValueError("backup_mode cannot be less than -1. Accepted values are: -1, 0")
+        elif self.backup_mode >= 1:
+            raise ValueError("backup_mode cannot be greater than 0. Accepted values are: -1, 0")
 
     async def __aenter__(self) -> "AsyncDatabase":
         return self
@@ -121,6 +130,8 @@ class AsyncDatabase:
             value (Any): The value to set it to. Must be JSON-serializable.
         """
         await self.set_raw(key, _dumps(value))
+        if self.backup_mode = 0:
+            await self.backup()
 
     async def set_raw(self, key: str, value: str) -> None:
         """Set a key in the database to value.
@@ -164,6 +175,8 @@ class AsyncDatabase:
             if response.status == 404:
                 raise KeyError(key)
             response.raise_for_status()
+        if self.backup_mode = 0:
+            await self.backup()
 
     async def list(self, prefix: str) -> Tuple[str, ...]:
         """List keys in the database which start with prefix.
@@ -223,6 +236,29 @@ class AsyncDatabase:
             Tuple[Tuple[str]]: The items
         """
         return tuple((await self.to_dict()).items())
+
+    async def backup(self) -> None:
+        """Backs up the DB to a customized file of choice
+        
+        Returns:
+            None: None
+        """
+        db = await self.to_dict()
+  
+        with open(self.backup_lok, 'w') as fout:
+            json.dump(db, fout)
+
+    async def load_backup(self, location: str=self.backup_lok) -> None:
+        """Overwrites the current DB with the data stored in the specified file
+        
+        Returns:
+            None: None
+        """
+        with open(location, "r") as fin:
+            back_db = json.load(fin)
+        for i in self.keys():
+            await self.delete(i)
+        await self.set_bulk_raw(back_db)
 
     def __repr__(self) -> str:
         """A representation of the database.
@@ -410,14 +446,22 @@ class Database(abc.MutableMapping):
 
     __slots__ = ("db_url", "sess")
 
-    def __init__(self, db_url: str) -> None:
+    def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
-            db_url (str): Database url to use.
+            db_url.     (str): Database url to use.
+            backup.     (str): Location of DB backups.
+            backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify, n [positive integer] for recurring backup every n seconds).
         """
+        self.backup_loc = backup
+        self.backup_mode = backup_mode
         self.db_url = db_url
         self.sess = requests.Session()
+        if self.backup_mode < -1:
+            raise ValueError("backup_mode cannot be less than -1. Accepted values are: -1, 0, n (where n is a positive integer)")
+        elif self.backup_mode >= 1:
+            self.backup_thread = threading.Thread(target=self.backup)
 
     def __getitem__(self, key: str) -> Any:
         """Get the value of an item from the database.
@@ -498,6 +542,8 @@ class Database(abc.MutableMapping):
             value (Any): The value to set.
         """
         self.set_raw(key, _dumps(value))
+        if self.backup_mode = 0:
+            self.backup()
 
     def set_raw(self, key: str, value: str) -> None:
         """Set a key in the database to value.
@@ -536,6 +582,8 @@ class Database(abc.MutableMapping):
             KeyError: Key is not set
         """
         r = self.sess.delete(self.db_url + "/" + urllib.parse.quote(key))
+        if self.backup_mode = 0:
+            self.backup()
         if r.status_code == 404:
             raise KeyError(key)
 
@@ -587,6 +635,32 @@ class Database(abc.MutableMapping):
         """JSON encodes a value that can be a special DB object."""
         return _dumps(val)
 
+    def backup(self) -> None:
+        """Backs up the DB to a customized file of choice
+        
+        Returns:
+            None: None
+        """
+        db = {}
+        keys = self.keys()
+        for i in keys:
+            db[i] = self.get_raw(i)
+  
+        with open(self.backup_lok, 'w') as fout:
+            json.dump(db, fout)
+
+    def load_backup(self, location: str=self.backup_lok) -> None:
+        """Overwrites the current DB with the data stored in the specified file
+        
+        Returns:
+            None: None
+        """
+        with open(location, "r") as fin:
+            back_db = json.load(fin)
+        for i in self.keys():
+            self.delete(i)
+        self.set_bulk_raw(back_db)
+
     def __repr__(self) -> str:
         """A representation of the database.
 
@@ -598,3 +672,16 @@ class Database(abc.MutableMapping):
     def close(self) -> None:
         """Closes the database client connection."""
         self.sess.close()
+
+
+class DatabaseStarter():
+    def __init__(self, db_url: str=""):
+        self.db_url = db_url
+
+    def start(self, backup: str=".config/db_backup.json", backup_mode: int=-1, warn=True):
+        if self.db_url:
+            return Database(db_url=db_url, backup=backup, backup_mode=backup_mode)
+        else:
+            if warn:
+                print("Replit DB is currently running in ephemeral mode, and will not save upon exiting.")
+            return dict()
