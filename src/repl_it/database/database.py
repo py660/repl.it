@@ -682,7 +682,7 @@ class DatabaseStarter():
 
     def start(self, backup: str=".config/db_backup.json", backup_mode: int=-1, warn=True):
         if self.db_url:
-            return Database(db_url=db_url, backup=backup, backup_mode=backup_mode)
+            return Database(db_url=self.db_url, backup=backup, backup_mode=backup_mode)
         else:
             if warn:
                 print("Replit DB is currently running in ephemeral mode, and will not save upon exiting.")
