@@ -124,7 +124,7 @@ class AsyncDatabase:
             response.raise_for_status()
             return await response.text()
 
-    async def set(self, key: str, value: Any) -> None:
+    async def set(self, key: str, value: Any, skip_backup: bool=False) -> None:
         """Set a key in the database to the result of JSON encoding value.
 
         Args:
@@ -132,7 +132,7 @@ class AsyncDatabase:
             value (Any): The value to set it to. Must be JSON-serializable.
         """
         await self.set_raw(key, _dumps(value))
-        if self.backup_mode == 0:
+        if self.backup_mode == 0 and not skip_backup:
             await self.backup()
 
     async def set_raw(self, key: str, value: str) -> None:
@@ -162,7 +162,7 @@ class AsyncDatabase:
         async with self.sess.post(self.db_url, data=values) as response:
             response.raise_for_status()
 
-    async def delete(self, key: str) -> None:
+    async def delete(self, key: str, skip_backup: bool=False) -> None:
         """Delete a key from the database.
 
         Args:
@@ -177,7 +177,7 @@ class AsyncDatabase:
             if response.status == 404:
                 raise KeyError(key)
             response.raise_for_status()
-        if self.backup_mode == 0:
+        if self.backup_mode == 0 and not skip_backup:
             await self.backup()
 
     async def list(self, prefix: str) -> Tuple[str, ...]:
@@ -260,9 +260,9 @@ class AsyncDatabase:
         with open(location, "r") as fin:
             back_db = json.load(fin)
         for i in self.keys():
-            await self.delete(i)
+            await self.delete(i, skip_backup=True)
         if back_db:
-            await self.set_bulk_raw(back_db)
+            await self.set_bulk_raw(back_db) #Overrides backup
 
 #    def __repr__(self) -> str:
 #        """A representation of the database.
@@ -539,7 +539,7 @@ class Database(abc.MutableMapping):
         """
         self.set(key, value)
 
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: str, value: Any, skip_backup: bool=False) -> None:
         """Set a key in the database to value, JSON encoding it.
 
         Args:
@@ -547,7 +547,7 @@ class Database(abc.MutableMapping):
             value (Any): The value to set.
         """
         self.set_raw(key, _dumps(value))
-        if self.backup_mode == 0:
+        if self.backup_mode == 0 and not skip_backup:
             self.backup()
 
     def set_raw(self, key: str, value: str) -> None:
@@ -577,7 +577,7 @@ class Database(abc.MutableMapping):
         r = self.sess.post(self.db_url, data=values)
         r.raise_for_status()
 
-    def __delitem__(self, key: str) -> None:
+    def __delitem__(self, key: str, skip_backup: bool=False) -> None:
         """Delete a key from the database.
 
         Args:
@@ -587,7 +587,7 @@ class Database(abc.MutableMapping):
             KeyError: Key is not set
         """
         r = self.sess.delete(self.db_url + "/" + urllib.parse.quote(key))
-        if self.backup_mode == 0:
+        if self.backup_mode == 0 and not skip_backup:
             self.backup()
         if r.status_code == 404:
             raise KeyError(key)
@@ -671,7 +671,7 @@ class Database(abc.MutableMapping):
             back_db = json.load(fin)
         #print(back_db)
         for i in self.keys():
-            self.__delitem__(i)
+            self.__delitem__(i, skip_backup=True)
         if back_db:
             self.set_bulk_raw(back_db)
 
