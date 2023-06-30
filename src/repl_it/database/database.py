@@ -73,6 +73,7 @@ class AsyncDatabase:
             backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify).
         """
+        print(self)
         self.backup_loc = backup
         self.backup_mode = backup_mode
         self.db_url = db_url
@@ -455,6 +456,7 @@ class Database(abc.MutableMapping):
             backup      (str): Location of DB backups.
             backup_mode (int): DB backup mode (-1 to disable, 0 for on_modify, n [positive integer] for recurring backup every n seconds).
         """
+        print(self)
         self.backup_loc = backup
         self.backup_mode = backup_mode
         self.db_url = db_url
