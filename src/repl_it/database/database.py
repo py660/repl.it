@@ -261,7 +261,8 @@ class AsyncDatabase:
             back_db = json.load(fin)
         for i in self.keys():
             await self.delete(i)
-        await self.set_bulk_raw(back_db)
+        if back_db:
+            await self.set_bulk_raw(back_db)
 
 #    def __repr__(self) -> str:
 #        """A representation of the database.
@@ -667,10 +668,11 @@ class Database(abc.MutableMapping):
         location = location if location else self.backup_loc
         with open(location, "r") as fin:
             back_db = json.load(fin)
-        print(back_db)
+        #print(back_db)
         for i in self.keys():
             self.__delitem__(i)
-        self.set_bulk_raw(back_db)
+        if back_db:
+            self.set_bulk_raw(back_db)
 
 #    def __repr__(self) -> str:
 #        """A representation of the database.
