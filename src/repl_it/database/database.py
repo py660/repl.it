@@ -262,13 +262,13 @@ class AsyncDatabase:
             await self.delete(i)
         await self.set_bulk_raw(back_db)
 
-    def __repr__(self) -> str:
-        """A representation of the database.
-
-        Returns:
-            A string representation of the database object.
-        """
-        return f"<{self.__class__.__name__}"#(db_url={self.db_url!r})>"
+#    def __repr__(self) -> str:
+#        """A representation of the database.
+#
+#        Returns:
+#            A string representation of the database object.
+#        """
+#        return f"<{self.__class__.__name__}(db_url={self.db_url!r})>"
 
 
 class ObservedList(abc.MutableSequence):
@@ -666,13 +666,13 @@ class Database(abc.MutableMapping):
             self.delete(i)
         self.set_bulk_raw(back_db)
 
-    def __repr__(self) -> str:
-        """A representation of the database.
-
-        Returns:
-            A string representation of the database object.
-        """
-        return f"<{self.__class__.__name__}"#(db_url={self.db_url!r})>"
+#    def __repr__(self) -> str:
+#        """A representation of the database.
+#
+#        Returns:
+#            A string representation of the database object.
+#        """
+#        return f"<{self.__class__.__name__}(db_url={self.db_url!r})>"
 
     def close(self) -> None:
         """Closes the database client connection."""
