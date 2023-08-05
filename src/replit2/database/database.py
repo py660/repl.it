@@ -656,7 +656,7 @@ class Database(abc.MutableMapping):
         for i in keys:
             ret[i] = self.get_raw(i)
   
-        print("ret:", ret)
+        #print("ret:", ret)
         with open(self.backup_loc, 'w') as fout:
             json.dump(ret, fout)
 
