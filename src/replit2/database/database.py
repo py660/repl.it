@@ -67,7 +67,7 @@ class AsyncDatabase:
 
     __slots__ = ("backup_loc", "backup_mode", "db_url", "sess")
 
-    def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
+    def __init__(self, db_url: str, backup: str="db_backup.json", backup_mode: int=-1) -> None:
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
@@ -448,9 +448,9 @@ class Database(abc.MutableMapping):
     don't want this, use AsyncDatabase instead.
     """
 
-    __slots__ = ("backup_loc", "backup_mode", "db_url", "sess")
+    __slots__ = ("backup_loc", "backup_mode", "db_url", "sess", "backup_thread")
 
-    def __init__(self, db_url: str, backup: str=".config/db_backup.json", backup_mode: int=-1) -> None:
+    def __init__(self, db_url: str, backup: str="db_backup.json", backup_mode: int=-1) -> None:
         """Initialize database. You shouldn't have to do this manually.
 
         Args:
@@ -692,7 +692,7 @@ class DatabaseStarter():
     def __init__(self, db_url: str=""):
         self.db_url = db_url
 
-    def start(self, backup: str=".config/db_backup.json", backup_mode: int=-1, warn=True):
+    def start(self, backup: str="db_backup.json", backup_mode: int=-1, warn=True):
         if self.db_url:
             return Database(db_url=self.db_url, backup=backup, backup_mode=backup_mode)
         else:
